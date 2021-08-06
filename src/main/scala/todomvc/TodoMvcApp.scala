@@ -73,6 +73,7 @@ object TodoMvcApp {
   // This is what we expose to the public – a single div element: not a stream, not some virtual DOM representation.
   // You can get the real JS DOM element it manages using its .ref property – that reference does not change over time.
   def apply(): HtmlElement = {
+
     div(
       cls("todoapp"),
       div(
@@ -92,7 +93,8 @@ object TodoMvcApp {
     )
   }
 
-  private def renderNewTodoInput =
+  private def renderNewTodoInput = {
+
     input(
       cls("new-todo"),
       placeholder("What needs to be done?"),
@@ -102,10 +104,15 @@ object TodoMvcApp {
         onEnterPress.mapTo(thisNode.ref.value).filter(_.nonEmpty) -->
           commandObserver.contramap[String] { text =>
             thisNode.ref.value = "" // clear input
+            println("-----> enter key press captured in component!!")
+//            if(true)
+//              throw new RuntimeException("this proves that the enter key press has been captured !")
+
             Create(itemText = text)
           }
       }
     )
+  }
 
   // Render a single item. Note that the result is a single element: not a stream, not some virtual DOM representation.
   private def renderTodoItem(itemId: Int, initialTodo: TodoItem, $item: Signal[TodoItem]): HtmlElement = {
@@ -198,5 +205,9 @@ object TodoMvcApp {
   private def pluralize(num: Int, singular: String, plural: String): String =
     s"$num ${if (num == 1) singular else plural}"
 
-  private val onEnterPress = onKeyPress.filter(_.keyCode == KeyCode.Enter)
+  private val onEnterPress = onKeyPress.filter {
+    keyboardEvent =>
+    println(s"--> KeyboardEvent: $keyboardEvent")
+      keyboardEvent.keyCode == KeyCode.Enter
+  }
 }
