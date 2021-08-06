@@ -51,7 +51,22 @@ element.dispatchEvent(new KeyboardEvent('keydown',{'key':'a'}));*/
 
 
     input.focus()
-    input.dispatchEvent(simulateKey("Enter", KeyCode.Enter))
+//    input.dispatchEvent(simulateKey("e", KeyCode.E))
+//    input.dispatchEvent(simulateKey("e", KeyCode.E))
+    println(input.value)
+    input.dispatchEvent(
+    new KeyboardEvent ("keydown", new KeyboardEventInit {
+      key = "e"
+      keyCode = KeyCode.E
+
+
+      //      bubbles = true
+      //      cancelable = false
+    })
+    )
+    println(input.value)
+    //    input.dispatchEvent(simulateKey("Enter", KeyCode.Enter))
+
     //$('#myInputId').trigger(jQuery.Event('keypress', { keycode: 13 }));
 
 //    val jqueryEventObject = new JQueryEventObject() {
@@ -75,7 +90,7 @@ element.dispatchEvent(new KeyboardEvent('keydown',{'key':'a'}));*/
 //    println(jquery("input").trigger("keypress", Map("keyCode" -> 13 )))
 //    println(jquery("input").trigger("keyup", Map("keyCode" -> 13 )))
 
-    input.value shouldBe ""
+//    input.value shouldBe ""
 
   }
 
@@ -83,7 +98,7 @@ element.dispatchEvent(new KeyboardEvent('keydown',{'key':'a'}));*/
 
     new KeyboardEvent ("keydown", new KeyboardEventInit {
       key = _key
-//      keyCode = _keyCode
+      keyCode = _keyCode
 //      bubbles = true
 //      cancelable = false
     })

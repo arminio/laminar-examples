@@ -14,8 +14,6 @@ scalaVersion := "2.13.5"
 
 crossScalaVersions := Seq("2.12.13", "2.13.5", "3.0.0")
 
-
-
 libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "1.0.0"
 
 npmDependencies in Compile ++= Seq(

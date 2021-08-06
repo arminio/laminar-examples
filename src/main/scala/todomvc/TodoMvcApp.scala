@@ -105,8 +105,8 @@ object TodoMvcApp {
           commandObserver.contramap[String] { text =>
             thisNode.ref.value = "" // clear input
             println("-----> enter key press captured in component!!")
-//            if(true)
-//              throw new RuntimeException("this proves that the enter key press has been captured !")
+            if(true)
+              throw new RuntimeException("this proves that the enter key press has been captured !")
 
             Create(itemText = text)
           }
