@@ -2,6 +2,7 @@ package ajax
 
 import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
+import com.raquo.domtypes.jsdom.defs.events.TypedTargetMouseEvent
 import com.raquo.laminar.api.L._
 import org.scalajs.dom
 
@@ -42,7 +43,7 @@ object AjaxTester {
         button(
           "Send",
           inContext { thisNode =>
-            val $click = thisNode.events(onClick).sample(selectedOptionVar.signal)
+            val $click: EventStream[AjaxOption] = thisNode.events(onClick).sample(selectedOptionVar.signal)
             val $response = $click.flatMap { opt =>
               AjaxEventStream
                 .get(

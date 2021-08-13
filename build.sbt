@@ -1,6 +1,8 @@
 enablePlugins(ScalaJSPlugin)
 
 enablePlugins(ScalaJSBundlerPlugin) // only needed for your JS dependencies, not for Laminar
+enablePlugins(ScalablyTypedConverterPlugin)
+
 
 name := "Laminar Examples"
 
@@ -14,11 +16,11 @@ scalaVersion := "2.13.5"
 
 crossScalaVersions := Seq("2.12.13", "2.13.5", "3.0.0")
 
-libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "1.0.0"
+//libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "1.0.0"
 
-npmDependencies in Compile ++= Seq(
-  "jquery" -> "2.1.3"
-)
+//npmDependencies in Compile ++= Seq(
+//  "jquery" -> "2.1.3"
+//)
 
 libraryDependencies ++= Seq(
   "com.raquo" %%% "laminar" % "0.13.1",
@@ -34,6 +36,15 @@ Compile / npmDependencies += "@material/mwc-button" -> "0.18.0"
 Compile / npmDependencies += "@material/mwc-linear-progress" -> "0.18.0"
 
 Compile / npmDependencies += "@material/mwc-slider" -> "0.18.0"
+
+Compile / npmDependencies ++= Seq(
+  "@testing-library/dom" -> "8.1.0",
+  "@testing-library/user-event" -> "13.2.1"
+
+//  ,
+//  "@types/testing-library/dom" -> "8.1.0"
+
+)
 
 scalaJSUseMainModuleInitializer := true
 

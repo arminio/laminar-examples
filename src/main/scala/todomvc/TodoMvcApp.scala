@@ -16,7 +16,6 @@ object TodoMvcApp {
 
   case class TodoItem(id: Int, text: String, completed: Boolean)
 
-
   sealed abstract class Filter(val name: String, val passes: TodoItem => Boolean)
 
   object ShowAll extends Filter("All", _ => true)
@@ -26,7 +25,6 @@ object TodoMvcApp {
   object ShowCompleted extends Filter("Completed", _.completed)
 
   val filters: List[Filter] = ShowAll :: ShowActive :: ShowCompleted :: Nil
-
 
   sealed trait Command
 
@@ -39,7 +37,6 @@ object TodoMvcApp {
   case class Delete(itemId: Int) extends Command
 
   case object DeleteCompleted extends Command
-
 
   // State
 
@@ -67,19 +64,17 @@ object TodoMvcApp {
       itemsVar.update(_.filterNot(_.completed))
   }
 
-
   // Rendering
 
   // This is what we expose to the public – a single div element: not a stream, not some virtual DOM representation.
   // You can get the real JS DOM element it manages using its .ref property – that reference does not change over time.
-  def apply(): HtmlElement = {
-
+  def apply(): HtmlElement =
     div(
       cls("todoapp"),
       div(
         cls("header"),
         h1("todos"),
-        renderNewTodoInput,
+        renderNewTodoInput
       ),
       div(
         hideIfNoItems,
@@ -91,28 +86,107 @@ object TodoMvcApp {
       ),
       renderStatusBar
     )
-  }
 
-  private def renderNewTodoInput = {
+  private def renderNewTodoInput =
+//    val list =
+    div(
+      input(
+        cls("new-todo"),
+        listId("list-id"),
+        placeholder("What needs to be done??"),
+        onMountFocus,
+        inContext { thisNode =>
+          // Note: mapTo below accepts parameter by-name, evaluating it on every enter key press
+          onEnterPress.mapTo(thisNode.ref.value).filter(_.nonEmpty) -->
+            commandObserver.contramap[String] { text =>
+              thisNode.ref.value = "" // clear input
+              //            println("-----> enter key press captured in component!!")
+              //            if(true)
+              //              throw new RuntimeException("this proves that the enter key press has been captured !")
 
-    input(
-      cls("new-todo"),
-      placeholder("What needs to be done?"),
-      onMountFocus,
-      inContext { thisNode =>
-        // Note: mapTo below accepts parameter by-name, evaluating it on every enter key press
-        onEnterPress.mapTo(thisNode.ref.value).filter(_.nonEmpty) -->
-          commandObserver.contramap[String] { text =>
-            thisNode.ref.value = "" // clear input
-            println("-----> enter key press captured in component!!")
-            if(true)
-              throw new RuntimeException("this proves that the enter key press has been captured !")
+              Create(itemText = text)
+            }
+        }
+      ),
+      dataList(
+        idAttr("list-id"),
+        List(
+          option("aam"),
+          option("aardvark"),
+          option("aardvarks"),
+          option("aardwolf"),
+          option("aardwolves"),
+          option("aargh"),
+          option("aaron"),
+          option("aaronic"),
+          option("aarrgh"),
+          option("aarrghh"),
+          option("aas"),
+          option("aasvogel"),
+          option("aasvogels"),
+          option("ab"),
+          option("aba"),
+          option("abac"),
+          option("abaca"),
+          option("abacas"),
+          option("abacate"),
+          option("abacaxi"),
+          option("abacay"),
+          option("abaci"),
+          option("abacinate"),
+          option("abacination"),
+          option("abacisci"),
+          option("abaciscus"),
+          option("abacist"),
+          option("aback"),
+          option("abacli"),
+          option("abacot"),
+          option("abacterial"),
+          option("abactinal"),
+          option("abactinally"),
+          option("abaction"),
+          option("abactor"),
+          option("abaculi"),
+          option("abaculus"),
+          option("abacus"),
+          option("abacuses"),
+          option("abada"),
+          option("abaddon"),
+          option("abadejo"),
+          option("abadengo"),
+          option("abadia"),
+          option("abaff"),
+          option("abaft"),
+          option("abaisance"),
+          option("abaised"),
+          option("abaiser"),
+          option("abaisse"),
+          option("abaissed"),
+          option("abaka"),
+          option("armin"),
+          option("aaron"),
+          option("aydin"),
+          option("ali"),
+          option("alison"),
+          option("althon"),
+          option("athol")
+        )
+      ),
+      button(
+        "Add",
+        inContext { thisNode =>
+          onClick.mapTo(thisNode.ref.value) -->
+            commandObserver.contramap[String] { text =>
+              thisNode.ref.value = "" // clear input
+              println("-----> button press captured in component!!")
+//            if (true)
+//              throw new RuntimeException("this proves that the button has been captured !")
 
-            Create(itemText = text)
-          }
-      }
+              Create(itemText = text)
+            }
+        }
+      )
     )
-  }
 
   // Render a single item. Note that the result is a single element: not a stream, not some virtual DOM representation.
   private def renderTodoItem(itemId: Int, initialTodo: TodoItem, $item: Signal[TodoItem]): HtmlElement = {
@@ -171,20 +245,22 @@ object TodoMvcApp {
         cls("todo-count"),
         child.text <-- itemsVar.signal
           .map(_.count(!_.completed))
-          .map(pluralize(_, "item left", "items left")),
+          .map(pluralize(_, "item left", "items left"))
       ),
       ul(
         cls("filters"),
         filters.map(filter => li(renderFilterButton(filter)))
       ),
       child.maybe <-- itemsVar.signal.map { items =>
-        if (items.exists(ShowCompleted.passes)) Some(
-          button(
-            cls("clear-completed"),
-            "Clear completed",
-            onClick.map(_ => DeleteCompleted) --> commandObserver
+        if (items.exists(ShowCompleted.passes))
+          Some(
+            button(
+              cls("clear-completed"),
+              "Clear completed",
+              onClick.map(_ => DeleteCompleted) --> commandObserver
+            )
           )
-        ) else None
+        else None
       }
     )
 
@@ -199,15 +275,13 @@ object TodoMvcApp {
   private def hideIfNoItems: Mod[HtmlElement] =
     display <-- itemsVar.signal.map(items => if (items.nonEmpty) "" else "none")
 
-
   // Helpers
 
   private def pluralize(num: Int, singular: String, plural: String): String =
     s"$num ${if (num == 1) singular else plural}"
 
-  private val onEnterPress = onKeyPress.filter {
-    keyboardEvent =>
+  private val onEnterPress = onKeyPress.filter { keyboardEvent =>
     println(s"--> KeyboardEvent: $keyboardEvent")
-      keyboardEvent.keyCode == KeyCode.Enter
+    keyboardEvent.keyCode == KeyCode.Enter
   }
 }
